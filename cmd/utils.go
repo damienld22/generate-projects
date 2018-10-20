@@ -6,18 +6,40 @@ import (
 	"path/filepath"
 )
 
+// CONSTANTS
 const nameTemplatesDirectory = ".gen"
 const nameTemplatesConfigFile = "templates.json"
 
+// TYPES
+type Templates struct {
+	Templates []Template `json:"templates"`
+}
+
+type Template struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Path        string `json:"path"`
+}
+
+// HANDLE ERRORS
 func checkError(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
-func checkGenDirExistsOrCreateIt() {
+// CONFIGURATION TEMPLATES
+func getTemplatesDirectory() string {
 	currentUser, _ := user.Current()
-	pathGenDir := filepath.Join(currentUser.HomeDir, nameTemplatesDirectory)
+	return filepath.Join(currentUser.HomeDir, nameTemplatesDirectory)
+}
+
+func getTemplatesConfigurationFile() string {
+	return filepath.Join(getTemplatesDirectory(), nameTemplatesConfigFile)
+}
+
+func checkGenDirExistsOrCreateIt() {
+	pathGenDir := getTemplatesDirectory()
 
 	if _, err := os.Stat(pathGenDir); os.IsNotExist(err) {
 		// Create the $HOME/.gen directory
