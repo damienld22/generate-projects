@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/otiai10/copy"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var saveCmd = &cobra.Command{
 		checkGenDirExistsOrCreateIt()
 		pathTemplate := saveTemplate(args[0])
 		saveTemplateConfig(pathTemplate)
-		fmt.Println("The template has been saved at " + pathTemplate)
+		log.Info("The template has been saved at " + pathTemplate)
 	},
 }
 

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +31,7 @@ var listCmd = &cobra.Command{
 		var templates Templates
 		byteValue, _ := ioutil.ReadAll(templatesConf)
 		json.Unmarshal(byteValue, &templates)
+		log.Debug("Templates are recovered")
 
 		// Display the list of available templates
 		if len(templates.Templates) > 0 {

@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 
 	"github.com/otiai10/copy"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -40,26 +40,27 @@ var createCmd = &cobra.Command{
 func createProjectFromTemplate(template string) {
 	pathTemplate := getPathTemplateFromName(template)
 
-	if pathTemplate != "" {
-		if targetPath == "" {
-			current, err := os.Executable()
-			checkError(err)
-			targetPath = filepath.Dir(current)
-		}
+	if targetPath == "" {
+		current, err := os.Executable()
+		checkError(err)
+		targetPath = filepath.Dir(current)
+	}
 
-		if nameDir == "" {
-			nameDir = template
-		}
+	if nameDir == "" {
+		nameDir = template
+	}
 
-		projectDir := filepath.Join(targetPath, nameDir)
-		os.Mkdir(projectDir, os.ModePerm)
-		copy.Copy(pathTemplate, projectDir)
+	projectDir := filepath.Join(targetPath, nameDir)
+	log.Debug("Path of the generated project : " + projectDir)
 
-		// Open VSCode if necessary
-		if openWithCode {
-			_, err := exec.Command("code", projectDir).Output()
-			checkError(err)
-		}
+	os.Mkdir(projectDir, os.ModePerm)
+	copy.Copy(pathTemplate, projectDir)
+	log.Info("Project successfully generated at " + projectDir)
+
+	// Open VSCode if necessary
+	if openWithCode {
+		_, err := exec.Command("code", projectDir).Output()
+		checkError(err)
 	}
 }
 
@@ -86,8 +87,12 @@ func getPathTemplateFromName(templateName string) string {
 	}
 
 	if path == "" {
-		fmt.Println("The template %s doesn't exist", templateName)
+		log.Error("The template %s is not available", templateName)
+		panic(1)
 	}
+
+	log.Debug("Template specified : " + templateName)
+	log.Debug("Path of the template : " + path)
 
 	return path
 }
