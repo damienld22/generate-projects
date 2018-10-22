@@ -9,6 +9,7 @@ import (
 // CONSTANTS
 const nameTemplatesDirectory = ".gen"
 const nameTemplatesConfigFile = "templates.json"
+const CustomWorkspace = "Custom"
 
 // TYPES
 type Templates struct {
@@ -57,5 +58,14 @@ func checkGenDirExistsOrCreateIt() {
 }
 
 func getListOfWorkspaces() []string {
+	currentUser, _ := user.Current()
+	homeDir := currentUser.HomeDir
+
 	listWorkspaces := make([]string, 0)
+
+	listWorkspaces = append(listWorkspaces, filepath.Join(homeDir, "Bureau"))
+	listWorkspaces = append(listWorkspaces, filepath.Join(homeDir, "workspace/sandbox"))
+	listWorkspaces = append(listWorkspaces, CustomWorkspace)
+
+	return listWorkspaces
 }

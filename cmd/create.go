@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -59,10 +60,11 @@ func interactiveCliInput() {
 
 	_, result, err := promptSelectTemplate.Run()
 	checkError(err)
+	templateName := result
 
 	// Open with VSCode
 	promptOpenVsCode := promptui.Prompt{
-		Label:     "Open with VSCode",
+		Label:     "Open with VSCode : ",
 		IsConfirm: true,
 	}
 
@@ -73,7 +75,39 @@ func interactiveCliInput() {
 		openWithCode = true
 	}
 
-	createProjectFromTemplate(result)
+	// Select the target workspace
+	promptSelectWorkspace := promptui.Select{
+		Label: "Select the workspace",
+		Items: getListOfWorkspaces(),
+	}
+
+	_, result, err = promptSelectWorkspace.Run()
+	checkError(err)
+
+	fmt.Println(result)
+
+	if result == CustomWorkspace {
+		promptCustomWorkspace := promptui.Prompt{
+			Label: "Custom workspace",
+		}
+
+		result, err = promptCustomWorkspace.Run()
+		checkError(err)
+	}
+	targetPath = result
+
+	// Select the name of the directory
+	promptNameDirectory := promptui.Prompt{
+		Label:   "Name of the project",
+		Default: templateName,
+	}
+
+	result, err = promptNameDirectory.Run()
+	checkError(err)
+	nameDir = result
+
+	// Create the project
+	createProjectFromTemplate(templateName)
 }
 
 /**

@@ -11,3 +11,5 @@ Generate projects from saved templates
 - [ ] Add documentation
 - [ ] Handle many IDE
 - [ ] Add the delete a template feature
+- [ ] External configuration workspaces
+- [ ] Interactive CLI for save
