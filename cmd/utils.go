@@ -55,3 +55,7 @@ func checkGenDirExistsOrCreateIt() {
 		file.Sync()
 	}
 }
+
+func getListOfWorkspaces() []string {
+	listWorkspaces := make([]string, 0)
+}

@@ -10,3 +10,4 @@ Generate projects from saved templates
 - [ ] Handle errors
 - [ ] Add documentation
 - [ ] Handle many IDE
+- [ ] Add the delete a template feature

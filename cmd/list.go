@@ -22,24 +22,15 @@ var listCmd = &cobra.Command{
 		// Init the command
 		checkGenDirExistsOrCreateIt()
 
-		// Get configuration of templates
-		templatesConf, err := os.Open(getTemplatesConfigurationFile())
-		checkError(err)
-		defer templatesConf.Close()
-
-		// Parsing the JSON file
-		var templates Templates
-		byteValue, _ := ioutil.ReadAll(templatesConf)
-		json.Unmarshal(byteValue, &templates)
-		log.Debug("Templates are recovered")
+		templates := getAllAvailableTemplates()
 
 		// Display the list of available templates
-		if len(templates.Templates) > 0 {
-			for i := 0; i < len(templates.Templates); i++ {
+		if len(templates) > 0 {
+			for i := 0; i < len(templates); i++ {
 				fmt.Println("======================================")
 				fmt.Println()
-				fmt.Println("Name : " + templates.Templates[i].Name)
-				fmt.Println("Description : " + templates.Templates[i].Description)
+				fmt.Println("Name : " + templates[i].Name)
+				fmt.Println("Description : " + templates[i].Description)
 				fmt.Println()
 			}
 			fmt.Println("======================================")
@@ -48,4 +39,22 @@ var listCmd = &cobra.Command{
 		}
 
 	},
+}
+
+/**
+ *	Get the list of all available templates
+ */
+func getAllAvailableTemplates() []Template {
+	// Get configuration of templates
+	templatesConf, err := os.Open(getTemplatesConfigurationFile())
+	checkError(err)
+	defer templatesConf.Close()
+
+	// Parsing the JSON file
+	var templates Templates
+	byteValue, _ := ioutil.ReadAll(templatesConf)
+	json.Unmarshal(byteValue, &templates)
+	log.Debug("Templates are recovered")
+
+	return templates.Templates
 }

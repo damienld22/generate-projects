@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/manifoldco/promptui"
 	"github.com/otiai10/copy"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -27,11 +28,52 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a project",
 	Long:  "Create a project from a saved template",
-	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		checkGenDirExistsOrCreateIt()
-		createProjectFromTemplate(args[0])
+
+		// Go to interactive mode or not
+		if len(args) == 0 {
+			interactiveCliInput()
+		} else {
+			createProjectFromTemplate(args[0])
+		}
+
 	},
+}
+
+/**
+ * Interactive mode to create a project from a templates
+ */
+func interactiveCliInput() {
+	// Select the template
+	availableTemplates := getAllAvailableTemplates()
+	itemsTemplates := make([]string, 0)
+	for _, elt := range availableTemplates {
+		itemsTemplates = append(itemsTemplates, elt.Name)
+	}
+
+	promptSelectTemplate := promptui.Select{
+		Label: "Select the template",
+		Items: itemsTemplates,
+	}
+
+	_, result, err := promptSelectTemplate.Run()
+	checkError(err)
+
+	// Open with VSCode
+	promptOpenVsCode := promptui.Prompt{
+		Label:     "Open with VSCode",
+		IsConfirm: true,
+	}
+
+	_, err = promptOpenVsCode.Run()
+	if err != nil {
+		openWithCode = false
+	} else {
+		openWithCode = true
+	}
+
+	createProjectFromTemplate(result)
 }
 
 /**
