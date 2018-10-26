@@ -9,6 +9,8 @@ import (
 	"github.com/otiai10/copy"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/manifoldco/promptui"
+
 )
 
 var name string
@@ -24,13 +26,55 @@ var saveCmd = &cobra.Command{
 	Use:   "save",
 	Short: "Save your template project",
 	Long:  "Give the path of your template and we save it to regenerate it later",
-	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		checkGenDirExistsOrCreateIt()
-		pathTemplate := saveTemplate(args[0])
-		saveTemplateConfig(pathTemplate)
-		log.Info("The template has been saved at " + pathTemplate)
+
+		// Go to interactive mode or not
+		if len(args) == 0 {
+			interactiveCliSave()
+		} else {
+			pathTemplate := saveTemplate(args[0])
+			saveTemplateConfig(pathTemplate)
+			log.Info("The template has been saved at ", pathTemplate)
+		}
+
 	},
+}
+
+/**
+ *	Save a template using the interactive mode
+ */
+func interactiveCliSave() {
+	// Select the path of the template
+	promptTemplatePath := promptui.Prompt{
+		Label: "Path of the template",
+	}
+	result, err := promptTemplatePath.Run()
+	checkError(err)
+
+	template := result
+
+	// Select the name of the template
+	promptTemplateName := promptui.Prompt{
+		Label: "Name of the template",
+	}
+	result, err = promptTemplateName.Run()
+	checkError(err)
+
+	name = result
+
+	// Select the description of the template
+	promptTemplateDescription := promptui.Prompt{
+		Label: "Description of the template",
+	}
+	result, err = promptTemplateDescription.Run()
+	checkError(err)
+	description = result
+
+	pathTemplate := saveTemplate(template)
+	saveTemplateConfig(pathTemplate)
+
+	log.Info("The template has been saved at ", pathTemplate)
 }
 
 /**

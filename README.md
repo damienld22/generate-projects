@@ -6,10 +6,8 @@ Generate projects from saved templates
 
 ## TODO list
 
-- [x] Add logger
-- [ ] Handle errors
-- [ ] Add documentation
-- [ ] Handle many IDE
-- [ ] Add the delete a template feature
-- [ ] External configuration workspaces
-- [ ] Interactive CLI for save
+-   [x] Add logger
+-   [ ] Add documentation
+-   [ ] Add the delete a template feature
+-   [ ] External configuration workspaces
+-   [x] Interactive CLI for save
