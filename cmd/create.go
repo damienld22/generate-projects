@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -84,8 +81,6 @@ func interactiveCliInput() {
 	_, result, err = promptSelectWorkspace.Run()
 	checkError(err)
 
-	fmt.Println(result)
-
 	if result == CustomWorkspace {
 		promptCustomWorkspace := promptui.Prompt{
 			Label: "Custom workspace",
@@ -138,37 +133,4 @@ func createProjectFromTemplate(template string) {
 		_, err := exec.Command("code", projectDir).Output()
 		checkError(err)
 	}
-}
-
-/**
- * Get the path of the template from his name
- */
-func getPathTemplateFromName(templateName string) string {
-	// Get configuration of templates
-	templatesConf, err := os.Open(getTemplatesConfigurationFile())
-	checkError(err)
-	defer templatesConf.Close()
-
-	// Parsing the JSON file
-	var templates Templates
-	byteValue, _ := ioutil.ReadAll(templatesConf)
-	json.Unmarshal(byteValue, &templates)
-
-	var path string
-	for _, elt := range templates.Templates {
-		if elt.Name == templateName {
-			path = elt.Path
-			break
-		}
-	}
-
-	if path == "" {
-		log.Error("The template %s is not available", templateName)
-		panic(1)
-	}
-
-	log.Debug("Template specified : " + templateName)
-	log.Debug("Path of the template : " + path)
-
-	return path
 }
