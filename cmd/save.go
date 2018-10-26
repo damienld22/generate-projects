@@ -52,7 +52,8 @@ func interactiveCliSave() {
 	result, err := promptTemplatePath.Run()
 	checkError(err)
 
-	template := result
+	template, err := filepath.Abs(result)
+	checkError(err)
 
 	// Select the name of the template
 	promptTemplateName := promptui.Prompt{
